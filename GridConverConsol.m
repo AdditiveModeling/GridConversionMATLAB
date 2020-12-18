@@ -11,7 +11,14 @@ global psi LM irow icol nzmax phi
 %Only edit values within these headers
 porosity = 0.55;
 powder_thick = 30; %Microns
+%File location for the last time step of the simulation
 basename = '/Users/Jacob/Desktop/result_single_layer/500x_layer_130/0/';
+%Desired ouput filename and location for the csv file
+fnameCsvOutput = "/Users/Jacob/Desktop/500x_layer_interp.csv";
+%File location for the pvd file from the simulation to read out time steps
+fnameTimeRead = '/Users/Jacob/Desktop/result_single_layer/500x_layer.pvd';
+%File location basename for reading in temperature values at each time step
+basename2 = '/Users/Jacob/Desktop/result_single_layer/500x_layer_';
 
 %Coarse Grid Values
 Origins = [200,1,17];
@@ -362,7 +369,6 @@ disp('Finished finding which element each grid point is in')
 %Loop through timesteps to interpolate temperature data onto grid
 newTemp = zeros(130/Inter,length(elemAssoc));
 count2 = 1;
-basename2 = '/Users/Jacob/Desktop/result_single_layer/500x_layer_';
 for j = 1:Inter:130
     basename3 = [basename2 num2str(j) '/0/'];
     temp = zeros(nnodes,1);
@@ -414,8 +420,7 @@ for j = 1:Inter:130
 end
 disp('Interpolated the temperature onto the coarse grid')
 
-fname = '/Users/Jacob/Desktop/result_single_layer/500x_layer.pvd';
-fileID = fopen(fname,'r');
+fileID = fopen(fnameTimeRead,'r');
 fgetl(fileID);
 fgetl(fileID);
 fgetl(fileID);
@@ -434,8 +439,7 @@ zqGrid = Origins(3):InterpSpacing(3):(NumPts(3)*Spacing(3)+Origins(3)-Spacing(3)
 
 InterpNumPts = [length(xqGrid),length(yqGrid),length(zqGrid)];
 
-fname = "/Users/Jacob/Desktop/500x_layer_interp.csv";
-fid = fopen (fname, 'w');
+fid = fopen (fnameCsvOutput, 'w');
 fprintf(fid,'Regular Grid Temperature History for Simulation 500x_layer_interp\n');
 fprintf(fid,'%s,%s,%s\n','X Origin','Y Origin','Z Origin');
 fprintf(fid,'%d,',Origins); fprintf(fid,'\n');
